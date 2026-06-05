@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgresql-backup-new-pv-11
+  name: postgresql-data-new-pv-11
 
 spec:
   capacity:
-    storage: 50Gi   # ✅ match backup PVC
+    storage: 10Gi
 
   volumeMode: Filesystem
 
@@ -14,13 +14,12 @@ spec:
 
   persistentVolumeReclaimPolicy: Retain
 
-  storageClassName: azurefile
+  storageClassName: ""
 
   claimRef:
-    name: postgresql-backup-new-pvc-11-db
+    name: postgresql-data-new-pvc-11-db
     namespace: dbns
 
   nfs:
-    path: /data/nfs/postgresql-backup-new
+    path: /data/nfs/postgresql-data-new
     server: 127.0.0.1
-``
