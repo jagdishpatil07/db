@@ -1,17 +1,98 @@
+# =========================================
+# ✅ DATA PV
+# =========================================
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgresql-data-new-pv-11
+
+spec:
+  capacity:
+    storage: 10Gi
+
+  volumeMode: Filesystem
+
+  accessModes:
+    - ReadWriteMany
+
+  persistentVolumeReclaimPolicy: Retain
+
+  storageClassName: ""
+
+  claimRef:
+    name: postgresql-data-new-pvc-11-db
+    namespace: dbns
+
+  nfs:
+    path: /data/nfs/postgresql-data-new
+    server: 127.0.0.1
+
+---
+# =========================================
+# ✅ BACKUP PV
+# =========================================
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgresql-backup-new-pv-11
+
+spec:
+  capacity:
+    storage: 50Gi
+
+  volumeMode: Filesystem
+
+  accessModes:
+    - ReadWriteMany
+
+  persistentVolumeReclaimPolicy: Retain
+
+  storageClassName: ""
+
+  claimRef:
+    name: postgresql-backup-new-pvc-11-db
+    namespace: dbns
+
+  nfs:
+    path: /data/nfs/postgresql-backup-new
+    server: 127.0.0.1
+
+---
+# =========================================
+# ✅ DATA PVC
+# =========================================
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgresql-backup-new-pvc-11-db
-  namespace: {{ .Values.global.namespace }}
+  name: postgresql-data-new-pvc-11-db
+  namespace: dbns
 
 spec:
   accessModes:
     - ReadWriteMany
 
-  storageClassName: {{ .Values.global.storageClassName }}
-
-  volumeMode: Filesystem
+  storageClassName: ""
 
   resources:
     requests:
-      storage: 20Gi
+      storage: 10Gi
+
+---
+# =========================================
+# ✅ BACKUP PVC
+# =========================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-backup-new-pvc-11-db
+  namespace: dbns
+
+spec:
+  accessModes:
+    - ReadWriteMany
+
+  storageClassName: ""
+
+  resources:
+    requests:
+      storage: 50Gi
