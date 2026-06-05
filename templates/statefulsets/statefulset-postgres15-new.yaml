@@ -18,15 +18,9 @@ spec:
         app: postgres-app
 
     spec:
-      ########################################################
-      # ✅ REQUIRED FOR PRIVATE ACR IMAGE
-      ########################################################
       imagePullSecrets:
         - name: acr-secret
 
-      ########################################################
-      # ✅ FIX VOLUME PERMISSIONS
-      ########################################################
       securityContext:
         fsGroup: 999
 
@@ -38,9 +32,6 @@ spec:
           ports:
             - containerPort: 5432
 
-          ########################################################
-          # ✅ IMPORTANT PGDATA CONFIG
-          ########################################################
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
@@ -51,28 +42,18 @@ spec:
             - secretRef:
                 name: secrets-production-postgres-new
 
-          ########################################################
-          # ✅ VOLUME MOUNTS
-          ########################################################
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
-
             - name: backup
               mountPath: /backups
 
-          ########################################################
-          # ✅ BASIC TUNING (SAFE DEFAULT)
-          ########################################################
           args:
             - "-c"
             - shared_buffers=256MB
             - "-c"
             - work_mem=4MB
 
-      ########################################################
-      # ✅ PVC LINKS
-      ########################################################
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -82,11 +63,7 @@ spec:
           persistentVolumeClaim:
             claimName: postgresql-backup-new-pvc-11-db
 
-  ########################################################
-  # ✅ STATEFULSET SETTINGS
-  ########################################################
   updateStrategy:
     type: RollingUpdate
 
   podManagementPolicy: OrderedReady
-``
