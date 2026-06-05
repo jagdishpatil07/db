@@ -20,7 +20,13 @@ spec:
 
     spec:
       ########################################################
-      # ✅ SECURITY (SAFE + RECOMMENDED)
+      # ✅ REQUIRED FOR PRIVATE ACR IMAGE
+      ########################################################
+      imagePullSecrets:
+        - name: acr-secret
+
+      ########################################################
+      # ✅ POD SECURITY
       ########################################################
       securityContext:
         runAsUser: 70
@@ -37,7 +43,7 @@ spec:
               protocol: TCP
 
           ########################################################
-          # ✅ SAFE SHUTDOWN (IMPORTANT FOR CONNECTIONS)
+          # ✅ SAFE SHUTDOWN (IMPORTANT)
           ########################################################
           lifecycle:
             preStop:
@@ -48,7 +54,7 @@ spec:
                   - killall -INT pgbouncer && sleep 120
 
           ########################################################
-          # ✅ ENV (MATCHES YOUR CONFIGMAP + SECRET)
+          # ✅ ENV CONFIG
           ########################################################
           env:
             - name: DB_HOST
