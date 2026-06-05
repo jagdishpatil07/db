@@ -5,16 +5,16 @@ metadata:
 
 spec:
   capacity:
-    storage: 10Gi   # ✅ must match PVC
+    storage: 10Gi
 
   volumeMode: Filesystem
 
   accessModes:
-    - ReadWriteMany   # ✅ must match PVC
+    - ReadWriteMany
 
   persistentVolumeReclaimPolicy: Retain
 
-  storageClassName: azurefile   # ✅ must match PVC
+  storageClassName: azurefile
 
   claimRef:
     name: postgresql-data-new-pvc-11-db
@@ -22,4 +22,4 @@ spec:
 
   nfs:
     path: /data/nfs/postgresql-data-new
-    server: 127.0.0.1   # ⚠️ replace with actual NFS IP if different
+    server: 127.0.0.1
