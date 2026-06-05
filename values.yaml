@@ -1,7 +1,8 @@
 global:
   namespace: dbns
   storageClassName: azurefile
-
+  imagePullSecrets:
+    name: acr-secret
 postgres:
   name: postgres-app
   serviceName: postgres-app
