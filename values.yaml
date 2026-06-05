@@ -1,0 +1,25 @@
+global:
+  namespace: dbns
+  storageClassName: azurefile
+
+postgres:
+  name: postgres-app
+  serviceName: postgres-app
+  replicaCount: 1
+
+  image: revolutio.azurecr.io/revolutio_kubernetes/postgres:15-bullseye
+
+  securityContext:
+    fsGroup: 999
+
+  pvc:
+    data: postgresql-data-new-pvc-11-db
+    backup: postgresql-backup-new-pvc-11-db
+
+  envConfigMap: envs-production-postgres-new
+  secret: secrets-production-postgres-new
+
+pgbouncer:
+  name: pgbouncer1-app
+  image: edoburu/pgbouncer:1.15.0
+  replicaCount: 1

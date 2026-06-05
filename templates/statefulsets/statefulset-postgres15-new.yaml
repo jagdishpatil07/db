@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-app
+  namespace: {{ .Values.global.namespace }}
+
+spec:
+  serviceName: postgres-app
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: postgres-app
+
+  template:
+    metadata:
+      labels:
+        app: postgres-app
+
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image }}
+
+          ports:
+            - containerPort: 5432
+
+          # Added PGDATA here
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+
+          envFrom:
+            - configMapRef:
+                name: envs-production-postgres-new
+            - secretRef:
+                name: secrets-production-postgres-new
+
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+
+            - name: backup
+              mountPath: /backups
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgresql-data-new-pvc-11-db
+
+        - name: backup
+          persistentVolumeClaim:
+            claimName: postgresql-backup-new-pvc-11-db

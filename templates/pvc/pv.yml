@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgresql-data-new-pv-11
+
+spec:
+  capacity:
+    storage: 10Gi   # ✅ must match PVC
+
+  volumeMode: Filesystem
+
+  accessModes:
+    - ReadWriteMany   # ✅ must match PVC
+
+  persistentVolumeReclaimPolicy: Retain
+
+  storageClassName: azurefile   # ✅ must match PVC
+
+  claimRef:
+    name: postgresql-data-new-pvc-11-db
+    namespace: dbns
+
+  nfs:
+    path: /data/nfs/postgresql-data-new
+    server: 127.0.0.1   # ⚠️ replace with actual NFS IP if different

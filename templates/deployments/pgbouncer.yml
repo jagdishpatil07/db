@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer1-app
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: pgbouncer1-app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: pgbouncer1-app
+
+  template:
+    metadata:
+      labels:
+        app: pgbouncer1-app
+
+    spec:
+      ########################################################
+      # ✅ SECURITY (SAFE + RECOMMENDED)
+      ########################################################
+      securityContext:
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+
+      containers:
+        - name: pgbouncer
+          image: {{ .Values.pgbouncer.image }}
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+
+          ########################################################
+          # ✅ SAFE SHUTDOWN (IMPORTANT FOR CONNECTIONS)
+          ########################################################
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - "-c"
+                  - killall -INT pgbouncer && sleep 120
+
+          ########################################################
+          # ✅ ENV (MATCHES YOUR CONFIGMAP + SECRET)
+          ########################################################
+          env:
+            - name: DB_HOST
+              value: postgres-app
+
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: envs-production-postgres-new
+                  key: POSTGRES_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets-production-postgres-new
+                  key: POSTGRES_PASSWORD
+
+            - name: PGBOUNCER_AUTH_TYPE
+              value: "trust"
+
+            - name: POOL_MODE
+              value: "transaction"
+
+            - name: SERVER_RESET_QUERY
+              value: "DISCARD ALL"
+
+            - name: IGNORE_STARTUP_PARAMETERS
+              value: "options"
+
+            - name: MAX_CLIENT_CONN
+              value: "100"
+
+            - name: default_pool_size
+              value: "50"
+
+          ########################################################
+          # ✅ CONTAINER SECURITY
+          ########################################################
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          resources: {}
+
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst

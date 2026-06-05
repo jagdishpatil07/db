@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envs-production-postgres-new
+  namespace: {{ .Values.global.namespace }}
+
+data:
+  # ✅ Postgres
+  POSTGRES_DB: App_DB
+  POSTGRES_USER: revolutio
+  ALLOW_EMPTY_PASSWORD: "yes"
+
+  # ✅ PgBouncer → DB connection
+  POSTGRESQL_HOST: postgres-app
+  DB_HOST: postgres-app
+
+  # ✅ PgBouncer settings
+  PGBOUNCER_AUTH_TYPE: trust
+  POOL_MODE: session
+  SERVER_RESET_QUERY: DISCARD ALL
+  IGNORE_STARTUP_PARAMETERS: "options"
+  MAX_CLIENT_CONN: "500"
+  default_pool_size: "50"
+
+  # ✅ Optional connection helpers
+  POSTGRES_PORT: "5432"
+  DATABASE_TYPE: PostgreSQL
